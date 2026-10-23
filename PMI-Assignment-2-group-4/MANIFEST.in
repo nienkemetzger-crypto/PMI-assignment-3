@@ -1,6 +1,0 @@
-# Recursively include everything from src/pmi_lib/, except compiled libraries and compiled (cached) Python modules.
-recursive-include src/pmi_lib/ *
-global-exclude *.dll
-global-exclude *.dylib
-global-exclude *.so
-global-exclude *.pyc
