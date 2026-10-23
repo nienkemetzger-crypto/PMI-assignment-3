@@ -1,0 +1,12 @@
+.venv/
+.idea/
+
+.DS_store
+
+__pycache__/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+build/*
+pmi_lib.egg-info/*
