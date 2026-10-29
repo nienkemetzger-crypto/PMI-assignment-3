@@ -11,6 +11,14 @@ def bilateral_filter_py(
         sigma_r: float,  # The standard deviation of the range kernel (sample values).
 
 ) -> Image:
+        """Applies a bilateral filter to a 2D object.
+    Args:
+        image: A 2D Image.
+        sigma_s: Standard deviation of the spatial kernel, in millimeters.
+        sigma_r: Standard deviation of the range kernel, in pixel values.
+    Returns a new Image with the filtered data and the same spacing.
+    Raises a ValueError if the image is not 2D.
+    """
 
     array = image[...]
     if array.ndim != 2:
