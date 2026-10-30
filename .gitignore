@@ -10,3 +10,9 @@ __pycache__/
 
 build/*
 pmi_lib.egg-info/*
+
+*.dll
+*.dylib
+*.so
+*.exe
+.DS_Store
