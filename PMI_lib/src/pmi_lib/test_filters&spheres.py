@@ -2,8 +2,47 @@ import numpy as np
 from pmi_lib.image import Image
 from pmi_lib.spheres import add_sphere, add_sphere_py, add_sphere_np
 from pmi_lib.bilateral_filter import bilateral_filter
-# Make sure to import bilateral_filter_py from wherever you implemented it!
-# from pmi_lib.bilateral_filter_py import bilateral_filter_py 
+from pmi_lib.bilateral_filter_py import bilateral_filter_py
+from pmi_lib.multithreading import apply_to_slices, apply_to_slices_parallel
+import time
+from scipy.ndimage import median_filter
+
+def test_parallel():
+    """Compare sequential and parallel slice filtering, timings, and results."""
+    noise = np.random.randn(50, 128, 128)
+    image = Image(noise, spacing=(1.0, 1.0, 2.0))
+    add_sphere(image, radius=50, value=10)
+
+    def compare(label, function, **kwargs):
+        start = time.perf_counter()
+        sequential = apply_to_slices(image, function, **kwargs)
+        sequential_time = time.perf_counter() - start
+
+        start = time.perf_counter()
+        parallel = apply_to_slices_parallel(image, function, **kwargs)
+        parallel_time = time.perf_counter() - start
+
+        difference = np.mean(
+            (np.asarray(sequential) - np.asarray(parallel)) ** 2
+        )
+
+        print(f"{label}:")
+        print(f"  sequential: {sequential_time:.3f} s")
+        print(f"  parallel:   {parallel_time:.3f} s")
+        print(f"  mean squared difference: {difference:.12g}")
+
+    compare(
+        "Bilateral filter",
+        bilateral_filter,
+        sigma_s=5.0,
+        sigma_r=2.0,
+    )
+
+    # scipy's filter takes arrays; convert each Image slice explicitly.
+    def median_filter_2d(slice_image, size):
+        return median_filter(np.asarray(slice_image), size=size)
+
+    compare("Median filter", median_filter_2d, size=13)
 
 def test_filters():
     """
@@ -14,7 +53,7 @@ def test_filters():
     image = Image(noise, spacing=(1.0, 2.0)) 
     add_sphere(image, radius=30, value=10) 
     
-    result_py = bilateral_filter(image, sigma_s=5.0, sigma_r=2.0)
+    result_py = bilateral_filter_py(image, sigma_s=5.0, sigma_r=2.0)
     result_c = bilateral_filter(image, sigma_s=5.0, sigma_r=2.0)
     
     # Measure and print the mean squared difference
@@ -67,3 +106,6 @@ if __name__ == "__main__":
     
     print("\n--- Running test_filters ---")
     test_filters() 
+
+    print("\n--- Running test_parallel ---")
+    test_parallel()

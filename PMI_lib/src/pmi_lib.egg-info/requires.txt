@@ -9,4 +9,3 @@ pylibjpeg
 pylibjpeg-libjpeg
 setuptools
 joblib
-

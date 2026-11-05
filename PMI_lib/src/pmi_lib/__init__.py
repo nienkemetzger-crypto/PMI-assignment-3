@@ -8,6 +8,8 @@ from .nifti import read_nifti, write_nifti
 from .convert import dicom_to_nifti
 from .filters import masked_gaussian_filter
 from .multithreading import apply_to_slices, apply_to_slices_parallel
+from .spherical_measurement import SphericalMeasurement
+from .bilateral_filter import bilateral_filter
 
 __all__ = [
     "Image",
@@ -17,6 +19,8 @@ __all__ = [
     "write_nifti",
     "dicom_to_nifti",
     "masked_gaussian_filter",
+    "bilateral_filter",
     "apply_to_slices",
     "apply_to_slices_parallel",
+    "SphericalMeasurement",
 ]

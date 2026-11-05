@@ -105,6 +105,41 @@ Applies a normalized Gaussian filter to an `Image` object.
 
 ---
 
+### bilateral_filter
+```python
+bilateral_filter(image: Image, sigma_s: float, sigma_r: float) -> Image
+```
+Applies a 2D bilateral filter and returns a new `Image` with the same spacing. `sigma_s` is the spatial standard deviation in millimeters. `sigma_r` is the standard deviation for image intensity values. The implementation uses compiled C code.
+
+---
+
+### apply_to_slices and apply_to_slices_parallel
+```python
+apply_to_slices(image: Image, f: Callable, *args, **kwargs) -> Image
+apply_to_slices_parallel(image: Image, f: Callable, *args, **kwargs) -> Image
+```
+These functions apply a 2D function to each slice of a 3D image and return the processed slices as a 3D `Image` with the original spacing. The parallel version uses joblib threads and chooses the number of CPU cores minus one, with at least one worker.
+
+---
+
+### SphericalMeasurement
+```python
+SphericalMeasurement(radius: float, functions: dict[str, Callable])
+```
+Creates a measurement object for a sphere with a radius in millimeters. The functions dictionary maps names such as `"mean"` or `"stddev"` to functions that accept a 1D NumPy array.
+
+Call the object with an image and voxel indices `(x, y, z)`:
+
+```python
+measurement = SphericalMeasurement(
+    20,
+    {"mean": np.mean, "stddev": np.std, "max": np.max},
+)
+result = measurement(image, 381, 300, 60)
+```
+The result dictionary contains the requested measurements and a `"cropped_image"` entry. That entry is an `Image` crop with the measured sphere highlighted for viewing.
+
+---
 ### test
 ```python
 test(path_dicom: str, path_new_nifti: str, sigma: tuple = (1.0, 1.0, 1.0))
@@ -118,12 +153,20 @@ project/
 ├── src/
 │   └── pmi_lib/
 │       ├── __init__.py
+│       ├── bilateral_filter_2D.c
+│       ├── bilateral_filter_py.py
+│       ├── bilateral_filter.py
 │       ├── convert.py
 │       ├── dicom.py
 │       ├── filters.py
 │       ├── image.py
 │       ├── main.py
+│       ├── multithreading.py
 │       ├── nifti.py
+│       ├── spheres.c
+│       ├── spheres.py
+│       ├── spherical_measurement.py
+│       ├── test_filters&spheres.py
 │       ├── test.py
 ├── pyproject.toml
 ├── README.md
@@ -154,6 +197,10 @@ pip uninstall pmi_lib
 - `scipy`
 - `click`
 
+
+Assignment 3b also uses `joblib` for parallel slice processing. It is declared in `pyproject.toml` and pip installs it with the package.
+
+The bilateral filter and sphere functions use compiled C code. Installing the package from source requires GCC to be available on the computer. GCC is a system tool, so pip cannot install it as a Python dependency.
 ---
 
 ## License
