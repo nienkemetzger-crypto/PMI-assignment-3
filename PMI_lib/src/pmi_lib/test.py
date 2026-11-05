@@ -116,6 +116,19 @@ def test(path_dicom: str,
         print(f"Sequential: {t_seq:.2f}s, parallel: {t_par:.2f}s")
     else:
         print("Skipped: apply_to_slices needs a 3D image")
+    
+    # SphericalMeasurement
+    print("\n===SphericalMeasurement===")
+    if image_new_nifti._data.ndim == 3:
+        measurement = SphericalMeasurement(
+            20, {"mean": np.mean, "stddev": np.std, "max": np.max}
+        )
+        result = measurement(image_new_nifti, 381, 300, 60)
+        print(
+            f"Mean: {result['mean']:.2f}, StdDev: {result['stddev']:.2f}, Max: {result['max']:.2f}"
+        )
+        cropped = result["cropped_image"]
+        view(cropped._data, spacing=cropped.spacing)
 
 
 file_path = pathfinder("ct_thorax_slice.dcm")

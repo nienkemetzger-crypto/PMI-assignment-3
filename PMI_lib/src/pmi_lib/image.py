@@ -7,7 +7,7 @@ class Image:
 
     def __init__(self,
                  data: np.ndarray,
-                 spacing: Optional[tuple[float | int, ...]] = None ): #: tuple[float, ...] = None):  Remove in final edit or find way to make it work for both float, int and float&int 
+                 spacing: Optional[tuple[float | int, ...]] = None ): #: tuple[float, ...] = None)
 
         #Error handling
         if not isinstance(data, np.ndarray): #error handling for data type
@@ -101,7 +101,7 @@ class DicomImage(Image): #DicomImage class that inherits from Image class
     def __eq__(self, other: Any) -> bool: #compare two DicomImage objects
         if not isinstance(other, DicomImage):
             return NotImplemented
-        return (np.array_equal(self._data, other.data) 
+        return (np.array_equal(self._data, other._data) 
                 and self.spacing == other.spacing 
                 and self.metadata == other.metadata)
 

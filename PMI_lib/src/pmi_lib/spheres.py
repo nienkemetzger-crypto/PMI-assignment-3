@@ -139,4 +139,6 @@ def add_sphere(image: Image, radius: float, value: float = 1.0) -> None:
     data = np.squeeze(data)
 
     # Reassign the modified data array back to the original image slice. 
-    image[:] = data.astype(image._data.dtype)
+    # This is necessary as np.ascontiguousarray creates a copy of the array in memory if the original image data is not already C-contiguous
+    # The C function modifies the copy, so we need to copy the modified data back to the original image slice.
+    image[:] = data.astype(image._data.dtype) 

@@ -18,7 +18,7 @@ def bilateral_filter_py(
 
 
     # Initialize the result as an array of zeros with the same shape and datatype as the data.
-    result = np.zeros_like(array, dtype=np.float32)
+    result = np.zeros_like(array, dtype=np.float64)
 
     # NumPy shape is (rows, columns) = (height, width). x is the fast column axis.
     spacing_y, spacing_x = image.spacing

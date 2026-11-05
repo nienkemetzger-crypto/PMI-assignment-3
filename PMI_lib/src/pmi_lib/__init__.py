@@ -10,6 +10,8 @@ from .filters import masked_gaussian_filter
 from .multithreading import apply_to_slices, apply_to_slices_parallel
 from .spherical_measurement import SphericalMeasurement
 from .bilateral_filter import bilateral_filter
+from .bilateral_filter_py import bilateral_filter_py
+from .spheres import add_sphere, add_sphere_py, add_sphere_np
 
 __all__ = [
     "Image",

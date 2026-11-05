@@ -19,7 +19,7 @@ int add_sphere(
     for (size_t z = 0; z < nz; z++) {
         for (size_t y = 0; y < ny; y++) {
             for (size_t x = 0; x < nx; x++) {
-                // Cast size_t to double before subtraction to prevent underflow with unsigned types[cite: 3]
+                // Cast size_t to double before subtraction to prevent underflow with unsigned types
                 double dx = ((double)x - cx) * sx;
                 double dy = ((double)y - cy) * sy;
                 double dz = ((double)z - cz) * sz;
