@@ -31,14 +31,14 @@ def apply_to_slices_parallel(image_3d: Image, slice_func: Callable, *args, **kwa
     # Use all cores but one (never less than one)
     n_jobs = max(1, cpu_count() - 1)
 
-    # Prepare the slices exactly as in the sequential version
+    # First prepare the slices just like in the sequential version
     slice_spacing = image_3d.spacing[:-1]
     input_slices = [Image(s, spacing=slice_spacing) for s in image_3d]
 
-    # Process the slices in parallel threads; results keep the input order
+    # Then, process the slices in parallel threads; results keep the input order
     processed_slices = Parallel(n_jobs=n_jobs, prefer="threads")(
         delayed(slice_func)(s, *args, **kwargs) for s in input_slices
     )
 
-    # Stack results into a 3D array and restore the original spacing
+    # Finally, stack results into a 3D array and restore the original spacing
     return Image(np.array(processed_slices), spacing=image_3d.spacing)
