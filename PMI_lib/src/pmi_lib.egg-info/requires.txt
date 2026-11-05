@@ -8,3 +8,5 @@ gdcm
 pylibjpeg
 pylibjpeg-libjpeg
 setuptools
+joblib
+

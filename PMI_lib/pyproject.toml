@@ -11,12 +11,12 @@ requires-python = '>=3.12'
 license = 'MIT'
 license-files = ['LICENSE.md']
 authors = [
-  {name = 'Astrid Burger', email = 'a.burger@students.uu.nl'},
-  {name = 'Sven Kruise', email = 's.n.kruise@students.uu.nl'},
+  {name = 'Galina Mencej', email = 'g.mencej@students.uu.nl'},
+  {name = 'Lucia van den Boogaart Castro', email = 'l.vandenboogaart@students.uu.nl'},
   {name = 'Fé Verheyen', email = 'f.verheyen@students.uu.nl'},
-  {name = 'Niels Kersten', email = 'n.m.l.kersten@students.uu.nl'},
+  {name = 'Nienke Metzger', email = 'n.metzger@students.uu.nl'},
 ]
-dependencies = ["nibabel", "numpy", "pydicom", "pmi_viewer", "scipy", "click", "gdcm", "pylibjpeg", "pylibjpeg-libjpeg", "setuptools"]
+dependencies = ["nibabel", "numpy", "pydicom", "pmi_viewer", "scipy", "click", "gdcm", "pylibjpeg", "pylibjpeg-libjpeg", "setuptools", "joblib"]
 
 [project.scripts]
 dicom-to-nifti = "pmi_lib.main:dicom_to_nifti_click"
