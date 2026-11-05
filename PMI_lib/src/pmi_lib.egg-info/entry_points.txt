@@ -1,2 +1,0 @@
-[console_scripts]
-dicom-to-nifti = pmi_lib.main:dicom_to_nifti_click

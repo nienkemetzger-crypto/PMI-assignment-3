@@ -76,6 +76,9 @@ class Image:
         """Enables direct indexing into the underlying image data (e.g., image[0, :, :])."""
         return self._data[key]
 
+    def __setitem__(self, key: Any, value: Any) -> None: # Enables updating pixel values directly via bracket indexing
+        self._data[key] = value
+
 class DicomImage(Image): #DicomImage class that inherits from Image class
     """A class to represent a DICOM image with pixel data, spacing information, and DICOM metadata."""
 
@@ -101,4 +104,5 @@ class DicomImage(Image): #DicomImage class that inherits from Image class
         return (np.array_equal(self._data, other.data) 
                 and self.spacing == other.spacing 
                 and self.metadata == other.metadata)
+
 
