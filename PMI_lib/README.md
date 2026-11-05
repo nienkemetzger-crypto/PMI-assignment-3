@@ -3,8 +3,29 @@
 A library created October 2026 for a Programming for Medical Imaging course.
 It contains functions as well as an imaging class.
 
+## Requirements
 
-## The Image and DicomImage class
+- Python 3.12 or later
+- GCC, to compile the native C code during installation
+
+Install GCC before installing the package if it is not already available. On Windows, the `setup.py` build script reports installation guidance if it cannot find GCC.
+
+### installation
+Clone the repository and install the package in editable mode using `pip`:
+
+```bash
+git clone https://github.com/NielsKersten/PMI-Assignment-2-group-4.git
+
+cd ~/PMI-Assignment-3 
+
+python -m pip install -e .
+```
+uninstall by simply
+```
+pip uninstall pmi_lib
+```
+
+## The Image classes
 
 ### Image 
 ```python
@@ -48,7 +69,7 @@ Inherits class attributes from `Image` with an additional class attribute `metad
   - `__eq__(other)`: Checks equality across array data, spacing, and metadata dictionary.
 
 ---
-## Functions
+## Reading and writing medical images
 
 ### read_dicom
 ```python
@@ -90,6 +111,8 @@ dicom_to_nifti(file_path_dicom: str, file_path_nifti: str) -> None
 Reads a DICOM file or directory and saves it as a NIfTI file.
 
 ---
+## Filters
+
 
 ### masked_gaussian_filter
 ```python
@@ -109,42 +132,59 @@ Applies a normalized Gaussian filter to an `Image` object.
 ```python
 bilateral_filter(image: Image, sigma_s: float, sigma_r: float) -> Image
 ```
-Applies a 2D bilateral filter and returns a new `Image` with the same spacing. `sigma_s` is the spatial standard deviation in millimeters. `sigma_r` is the standard deviation for image intensity values. The implementation uses compiled C code.
+Applies a 2D bilateral filter using compiled C code. `sigma_s` is the spatial standard deviation in millimeters; `sigma_r` is the standard deviation for intensity values.
 
 ---
 
-### apply_to_slices and apply_to_slices_parallel
+### Slice processing
 ```python
 apply_to_slices(image: Image, f: Callable, *args, **kwargs) -> Image
 apply_to_slices_parallel(image: Image, f: Callable, *args, **kwargs) -> Image
 ```
-These functions apply a 2D function to each slice of a 3D image and return the processed slices as a 3D `Image` with the original spacing. The parallel version uses joblib threads and chooses the number of CPU cores minus one, with at least one worker.
+Applies a 2D function to each slice of a 3D `image` and returns the processed slices as a 3D Image. The parallel version uses joblib threads and chooses up to the number of CPU cores minus one, with at least one worker.
 
 ---
 
-### SphericalMeasurement
+### Spherical measurements
 ```python
 SphericalMeasurement(radius: float, functions: dict[str, Callable])
 ```
-Creates a measurement object for a sphere with a radius in millimeters. The functions dictionary maps names such as `"mean"` or `"stddev"` to functions that accept a 1D NumPy array.
-
-Call the object with an image and voxel indices `(x, y, z)`:
+Creates a callable measurement object. The radius is in millimeters. Each function should accept a one-dimensional NumPy array of voxel values and return a statistic.
 
 ```python
+import numpy as np
+from pmi_lib import SphericalMeasurement, read_nifti
+
+image = read_nifti("ct_jaw.nii.gz")
 measurement = SphericalMeasurement(
     20,
     {"mean": np.mean, "stddev": np.std, "max": np.max},
 )
 result = measurement(image, 381, 300, 60)
+
+print(result["mean"])
+cropped_image = result["cropped_image"]
 ```
-The result dictionary contains the requested measurements and a `"cropped_image"` entry. That entry is an `Image` crop with the measured sphere highlighted for viewing.
+The result includes each requested statistic and a cropped `Image` with the measured sphere highlighted.
 
 ---
-### test
+## Tests and examples
+
+The scripts below are examples and comparison checks. They print results; they are not configured as an automated test suite.
+
+### test.py
 ```python
 test(path_dicom: str, path_new_nifti: str, sigma: tuple = (1.0, 1.0, 1.0))
 ```
-A demonstration pipeline script that exercises DICOM reading, image inspections, NumPy protocols, DICOM-to-NIfTI conversion, and masked Gaussian filtering on sample datasets.
+This script demonstrates DICOM and NIfTI reading, image properties, NumPy compatibility, masked Gaussian filtering, and sequential and parallel slice processing. It also displays images with `pmi_viewer`.
+
+Run it from a directory that contains the sample DICOM file `ct_thorax_slice.dcm` and the `ct_jaw` directory, or their parent directory:
+
+### test_filters&spheres.py
+```python
+test(path_dicom: str, path_new_nifti: str, sigma: tuple = (1.0, 1.0, 1.0))
+```
+This script compares the Python and C bilateral filters, compares the Python, NumPy, and C sphere implementations, and compares sequential and parallel slice processing with bilateral and median filters.
 
 ---
 
@@ -175,32 +215,23 @@ project/
 └── LICENSE.md
 ```
 
-### How to install
-Clone the repository and install the package in editable mode using `pip`:
 
-```bash
-git clone https://github.com/NielsKersten/PMI-Assignment-2-group-4.git
-
-cd ~/PMI-Assignment-2-group-4 
-
-python -m pip install -e .
-```
-uninstall by simply
-```
-pip uninstall pmi_lib
-```
 
 ### Dependencies
+- `nibabel`
 - `numpy`
 - `pydicom`
-- `nibabel`
+- `pmi_viewer`
 - `scipy`
 - `click`
+- `gdcm`
+- `pylibjpeg`
+- `pylibjpeg-libjpeg`
+- `joblib`
 
 
-Assignment 3b also uses `joblib` for parallel slice processing. It is declared in `pyproject.toml` and pip installs it with the package.
+The C code is compiled during installation. GCC is a system compiler and must be installed separately.
 
-The bilateral filter and sphere functions use compiled C code. Installing the package from source requires GCC to be available on the computer. GCC is a system tool, so pip cannot install it as a Python dependency.
 ---
 
 ## License
